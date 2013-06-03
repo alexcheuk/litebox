@@ -1,4 +1,4 @@
-litebox
+LITEBOX
 =======
 
-a lightbox lite
+A LightBox Lite
