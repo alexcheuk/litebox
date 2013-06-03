@@ -1,4 +1,8 @@
-LITEBOX
+LITEBOX - LightBox Lite
 =======
 
-A LightBox Lite
+Work In Progress.
+
+Preview:
+
+http://alexcheuk.com/litebox
