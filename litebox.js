@@ -1,7 +1,7 @@
-(function($){
+;(function($){
 
 	var template = {
-		lightbox : '<div class="litebox-overlay"><div class="litebox"><div class="litebox-wrapper"><div class="litebox-content"></div></div><div class="litebox-message"></div></div></div>',
+		lightbox : '<div class="litebox-overlay"><div class="litebox"><div class="litebox-wrapper"><div class="litebox-content"></div><div class="litebox-overlay-loader"><i class="icon-spinner icon-spin icon-2x"></i><br/><br/>Loading ...</div></div><div class="litebox-message"></div></div></div>',
 		title: '<div class="litebox-title"></div>',
 		bottom: '<div class="litebox-bottom"></div>',
 		placeholder: '<div class="litebox-placeholder"></div>'
@@ -20,6 +20,8 @@
 	element['content'] = element.lightbox.find('.litebox-content');
 	element['box'] = element.lightbox.find('.litebox');
 	element['message'] = element.lightbox.find('.litebox-message');
+	element['wrapper'] = element.lightbox.find('.litebox-wrapper');
+	element['loader'] = element.lightbox.find('.litebox-overlay-loader');
 
 	var _ = {
 		tryClose: function(e){
@@ -36,18 +38,20 @@
 				options: opt
 			}).on('click', function(e){
 				$.litebox.trigger(this);
+				e.stopPropagation();
+				e.preventDefault();
 			});
 		});
 
 	};
 
 	$.litebox = function(){
-		$.litebox.open.apply(this, arguments);
+		$.litebox.open.apply($.litebox, arguments);
 	};
 
 	$.extend($.litebox, {
 		isOpen: false,
-		current: {},
+		current: {handle:null},
 		defaults : {
 			width: "auto",
 			height: "auto",
@@ -56,6 +60,8 @@
 			messageDuration: 5000,
 			buttons: null,
 			title: null,
+			backgroundColor: "white",
+			preLoading: false,
 
 			beforeOpen: function(){},
 			onOpen: function() {},
@@ -80,10 +86,7 @@
 
 			var target = this.current.target = target instanceof jQuery ? target : $(target);
 			
-			var width = (options.width == "auto") ? target.innerWidth() : options.width;
-			var height = (options.height == "auto") ? target.innerHeight() :options.height;
-
-			var title = options.title || this.current.handle.title;
+			var title = (options.title) ? options.title : (this.current.handle) ? this.current.handle.title : null;
 
 			if(title){
 				element.box.prepend(element.title.html(title));
@@ -94,13 +97,25 @@
 			if(options.buttons){
 				element.bottom.empty();
 
+				var that = this;
+
 				for(var i = 0, len = options.buttons.length; i < len; i++){
 					var button = options.buttons[i];
 					var buttonElem = $('<div class="litebox-btn">'+button.label+'</div>');
 					if(button.color){
 						buttonElem.css('background-color', button.color);
 					}
-					buttonElem.on('click', $.proxy(button.callback, this));
+
+					if(button.orientation){
+						buttonElem.css('float', button.orientation);
+					}
+
+					buttonElem.on('click', (function(e, button){
+						return function(){
+							button.callback.apply(target, [e, that.current]);
+						}
+					})(event, button));
+
 					element.bottom.append(buttonElem);
 				}
 
@@ -109,10 +124,43 @@
 				element.bottom.remove();
 			}
 
-			$(document.body).append(element.lightbox.show());
+			$(document.body).append(element.lightbox.show().css('opacity', 1));
+
+			element.placeholder.insertAfter(target);
+			target.appendTo(element.content);
+
+			if(options.preLoading){
+				element['loader'].show();
+				target.hide();
+			}else{
+				target.show();
+			}
+
+			var width = (options.width == "auto") ? "auto" : options.width;
+			var height = (options.height == "auto") ? "100%" :options.height;
+
+			element.box.css({
+				height: 'auto',
+				width: 'auto'
+			});
+			
+			element.content
+				.css('height', height)
+				.css('width', width)
+				.css('background-color',options.backgroundColor);
+
+			element.wrapper
+				.css('background-color',options.backgroundColor);
+
+			width = element.content.innerWidth();
+			height = element.content.innerHeight();
 
 			var calcHeight = height+32+element.title.innerHeight()+element.bottom.innerHeight(),
 				calcWidth = (width+32);
+
+			if(element.loader.is(":visible")){
+				calcHeight+=element.loader.innerHeight();
+			}
 
 			element.box
 				.css('width',calcWidth+'px')
@@ -122,11 +170,8 @@
 				.css('opacity', 0);
 
 			element.content
-				.css('height', height+'px')
-				.css('width', width+'px');
-			
-			element.placeholder.insertAfter(target);
-			target.appendTo(element.content).show();
+				.css('height', height)
+				.css('width', width);		
 
 			element.box.animate({
 				'margin-top' : '-'+(calcHeight/2)+'px',
@@ -160,33 +205,58 @@
 
 				options.onClose.apply(that.current.handle);
 				that.isOpen = false;
+
+				element.lightbox.remove();
 			});
 
 			this.hideMessage();
 		},
 
-		update: function(){
+		update: function(onComplete){
 			if(!this.isOpen) return;
 
 			var that = this;
 			var options = this.current.options;
-			var target = this.current.target,
-				width = target.innerWidth(),
-				height = target.innerHeight();
+			var target = this.current.target;
+			
+			var width = (options.width == "auto") ? "auto" : options.width;
+			var height = (options.height == "auto") ? "100%" :options.height;
+
+			element.box.css({
+				height: 'auto',
+				width: 'auto'
+			});
+
+			element.content
+				.css('height', height)
+				.css('width', width);
+
+			width = element.content.innerWidth();
+			height = element.content.innerHeight();
 
 			var calcHeight = height+32+element.title.innerHeight()+element.bottom.innerHeight(),
 				calcWidth = (width+32);
 
-			element.box.animate({
+			if(element.loader.is(":visible")){
+				calcHeight+=element.loader.innerHeight();
+			}
+
+			element.box.stop().animate({
 				'width' : calcWidth+'px',
 				'margin-left' : '-'+(calcWidth/2)+'px',
 				'height' : calcHeight+'px',
-				'margin-top' : '-'+(calcHeight/2)+'px'
+				'margin-top' : '-'+(calcHeight/2)+'px',
+				'opacity': 1
+			}, 200, function(){
+				if(onComplete) onComplete.apply(null);
+			});
+
+			element.content.stop().animate({
+				'width' : width+'px',
+				'height' : height+'px',
+				'opacity' : 1
 			}, 200);
 
-			element.content
-				.css('height', height+'px')
-				.css('width', width+'px');
 		},
 
 		showMessage: function(errorMsg, colorType){
@@ -209,8 +279,14 @@
 
 		hideMessage: function(){
 			element.message.animate({
-				'bottom' : 0 + 'px'
+				'bottom' : '5px'
 			},200);
+		},
+
+		finishLoading: function(){
+			element.loader.hide();
+			this.current.target.show();
+			this.update();
 		},
 
 		setTitle: function(title){
@@ -218,7 +294,6 @@
 		}
 
 	});
-
 
 
 })(jQuery);
