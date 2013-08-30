@@ -1,87 +1,130 @@
-.litebox-overlay{
-	position:fixed;
-	top:0;
-	left:0;
-	right:0;
-	bottom:0;
-
-	background:rgba(100,100,100,0.9);
-	z-index:99999;
+.litebox {
+        font-family: Arial;
 }
 
-.litebox-title{
-	font-size:14px;
-	padding:10px 15px;
-	/*font-weight:bold;*/
-	background-color: #3a4450;
-	background-image: url(../../images/stripe.png);
-	color:#fff;
-	border-bottom:1px solid #ccc;
-	text-transform: uppercase;
-	border-radius:3px 3px 0 0 ;
+.litebox-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url(../../images/overlays/gray90.png);
+        background: rgba(0,0,0,0.5);
+        z-index: 99999;
 }
 
-.litebox{
-	position:absolute;
-
-	width:600px;
-	height:400px;
-
-	top:50%; margin-top:-200px;
-	left:50%; margin-left:-300px;
-
-	box-shadow:0 0 5px #666;
-
-	background:white;
-	border-radius:3px;
-	border:1px solid #d8d8d8;
-
-	box-sizing:border-box;
+.litebox-title {
+        font-size: 14px;
+        padding: 10px 15px; 
+        background-color: #3a4450;
+        background-image: url(../../images/stripe.png);
+        color: #fff;
+        border-bottom: 1px solid #ccc;
+        text-transform: uppercase;
+        border-radius: 3px 3px 0 0;
 }
 
-.litebox-wrapper{
-	background:white;
-	position:relative;
-	z-index:2;
+.litebox-overlay .litebox {
+        position: absolute;
+        top: 50%;
+        margin-top: -200px;
+        left: 50%;
+        margin-left: -300px;
+
+        -webkit-box-shadow: 0 0 5px #666;
+        box-shadow: 0 0 5px #666;
+        background: white;
+        border-radius: 3px;
+        border: 1px solid #d8d8d8;
+
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -ms-box-sizing: border-box;
+        box-sizing: border-box;
 }
 
-.litebox-content{
-	padding:15px;
+.litebox-wrapper {
+        background: white;
+        position: relative;
+        z-index: 2;
+        padding: 15px;
 }
 
-.litebox-message{
-	position:absolute;
-	background:#c00;
-	padding:8px;
-
-	bottom:0;
-	left:20px;
-	right:20px;
-
-	border-radius:0 0 3px 3px;
-	z-index:1;
-	color:white;
-	box-shadow:0 0 5px #333;
+.litebox-content {
+        position: relative;
+        overflow: auto;
+        min-height: 50px;
 }
 
-.litebox-bottom{
-	position:relative;
-	background:#eee;
-	z-index:2;
-	padding:8px 15px;
-	text-align: right;
-	border-radius: 0 0 3px 3px;
-	border-top:1px solid #ddd;
+.litebox-message {
+        position: absolute;
+        background: #c00;
+        padding: 8px;
+        bottom: 5px;
+        left: 20px;
+        right: 20px;
+        border-radius: 0 0 3px 3px;
+        z-index: -1;
+        color: white;
+
+        -webkit-box-shadow: 0 0 5px #333;
+        box-shadow: 0 0 5px #333;
 }
 
-.litebox-btn{
-	padding:8px 10px;
-	/*border:#666 1px solid;*/
-	background:#09c;
-	display:inline-block;
-	text-align:center;
-	min-width:50px;
-	color:#fff;
-	cursor:pointer;
-	margin-left:5px;
+.litebox-overlay-loader {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255,255,255,0.7);
+        display: none;
+        text-align: center;
+}
+
+.litebox-overlay-loader-txt {
+        position: absolute;
+        text-align: center;
+        color: #333;
+        width: 60px;
+        margin-left: -30px;
+        left: 50%;
+        height: 50px;
+        top: 50%;
+        margin-top: -25px;
+}
+
+.litebox-bottom {
+        position: relative;
+        background: #eee;
+        z-index: 2;
+        padding: 8px 15px;
+        text-align: right;
+        border-radius: 0 0 3px 3px;
+        border-top: 1px solid #ddd;
+}
+
+.litebox-btn {
+        padding: 8px 10px;
+        background: #09c url(../../images/stripe.png);
+        display: inline-block;
+        text-align: center;
+        min-width: 50px;
+        color: #fff;
+        cursor: pointer;
+        margin-left: 5px;
+        font-family: Arial;
+        font-size: 11px;
+        text-transform: uppercase;
+        -webkit-touch-callout: none;
+
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+}
+
+.litebox-btn i.icon-spinner {
+        margin: 0 0 0 10px;
+        color: white;
 }
