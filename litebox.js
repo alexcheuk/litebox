@@ -76,10 +76,6 @@
             var viewportWidth = $(window).width();
             var viewportHeight = $(window).height();
 
-            if(boxWidth >= viewportWidth - 20 || boxHeight >= viewportHeight -20){
-                return;
-            }
-
             element.box.css({
                 height: 'auto',
                 width: 'auto'
